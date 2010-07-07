@@ -506,6 +506,9 @@ function _node_resource_access($op = 'view', $args = array()) {
   if ($op != 'create' && !empty($args)) {
     $node = node_load($args[0]);
   }
+  elseif ($op == 'create') {
+    $node = $args[0];
+  }
   return node_access($op, $node);
 }
 
