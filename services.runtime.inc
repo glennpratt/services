@@ -516,8 +516,20 @@ function _taxonomy_resource_access($op = 'view', $args = array()) {
   // TODO - check perms of user to return ability to interact with terms / vocabulary
 }
 
-function _user_resource_update_access($args = array()) {
+/**
+ * Access check callback for user resource.
+ */
+function _user_resource_access($op = 'view', $args = array()) {
   global $user;
-  $args[0] = $account;
-  return ($user->uid == $account->uid || user_access('administer users'));
+  switch($op) {
+    case 'view':
+      $account = user_load($args[0]);
+      return user_view_access($account);
+    case 'update':
+      $args[0] = $account;
+      return ($user->uid == $account->uid || user_access('administer users'));
+    case 'create':
+    case 'delete':
+      return user_access('administer users');
+  }
 }
