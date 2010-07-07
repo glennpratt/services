@@ -10,7 +10,7 @@ function _user_resource_definition() {
       'retrieve' => array(
         'help' => 'Retrieves a user',
         'callback' => '_user_resource_retrieve',
-        'access arguments' => array('access user profiles'), // this is probably not enough, doesn't block things like pass and email
+        'access callback' => '_user_resource_retrieve_access',
         'access arguments append' => TRUE,
         'args' => array(
           array(
@@ -319,4 +319,14 @@ function user_service_logout() {
   $user = drupal_anonymous_user();
 
   return TRUE;
+}
+
+/**
+ * Access check for user retrieve.
+ *
+ * Wrapper for user_view_access that loads the account from uid.
+ */
+function _user_resource_retrieve_access($uid) {
+  $account = user_load($uid);
+  return user_view_access($account);
 }
