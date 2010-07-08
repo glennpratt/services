@@ -19,7 +19,7 @@ function _user_resource_definition() {
             'type' => 'int',
             'description' => 'The uid of the user to retrieve.',
             'source' => array('path' => '0'),
-            'optional' => FALSE,
+            'optional' => false,
           ),
         ),
       ),
