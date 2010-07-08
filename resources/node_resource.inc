@@ -4,8 +4,8 @@
 function _node_resource_definition() {
   return array(
     'node' => array(
-      'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
       'retrieve' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
         'callback' => '_node_resource_retrieve',
         'args' => array(
           array(
@@ -21,6 +21,7 @@ function _node_resource_definition() {
         'access arguments append' => TRUE,
       ),
       'create' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
         'callback' => '_node_resource_create',
         'args' => array(
           array(
@@ -36,8 +37,16 @@ function _node_resource_definition() {
         'access arguments append' => TRUE,
       ),
       'update' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
         'callback' => '_node_resource_update',
         'args' => array(
+          array(
+            'name' => 'nid',
+            'optional' => FALSE,
+            'source' => array('path' => 0),
+            'type' => 'int',
+            'description' => 'The nid of the node to get',
+          ),
           array(
             'name' => 'node',
             'optional' => FALSE,
@@ -51,6 +60,7 @@ function _node_resource_definition() {
         'access arguments append' => TRUE,
       ),
       'delete' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
         'callback' => '_node_resource_delete',
         'args' => array(
           array(
@@ -64,6 +74,7 @@ function _node_resource_definition() {
         'access arguments append' => TRUE,
       ),
       'index' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
         'callback' => '_node_resource_index',
         'args' => array(
           array(
@@ -92,7 +103,7 @@ function _node_resource_definition() {
           ),
         ),
         'access arguments' => array('access content'),
-        'access arguments append' => TRUE,
+        'access arguments append' => FALSE,
       ),
     ),
   );
