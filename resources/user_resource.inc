@@ -5,9 +5,9 @@ function _user_resource_definition() {
   return array(
     'user' => array(
 
-      'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
 
       'retrieve' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
         'help' => 'Retrieves a user',
         'callback' => '_user_resource_retrieve',
         'access callback' => '_user_resource_access',
@@ -25,6 +25,7 @@ function _user_resource_definition() {
       ),
 
       'create' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
         'help' => 'Creates a user',
         'callback' => '_user_resource_create',
         'access callback' => '_user_resource_access',
@@ -42,6 +43,7 @@ function _user_resource_definition() {
       ),
 
       'update' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
         'help' => 'Updates a user',
         'callback' => '_user_resource_update',
         'access callback' => '_user_resource_access',
@@ -59,6 +61,7 @@ function _user_resource_definition() {
       ),
      
       'delete' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
         'help' => 'Deletes a user',
         'callback' => '_user_resource_delete',
         'access callback' => '_user_resource_access',
@@ -77,6 +80,7 @@ function _user_resource_definition() {
 
       'actions' => array(
         'login' => array(
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
           'help' => 'Login a user for a new session',
           'callback' => '_user_resource_login',
           'access arguments' => array('access content'),
@@ -99,6 +103,7 @@ function _user_resource_definition() {
         ),
 
         'logout' => array(
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
           'help' => 'Logout a user session',
           'callback' => '_user_resource_logout',
           'access arguments' => array('access content'),
