@@ -4,8 +4,6 @@
 function _user_resource_definition() {
   return array(
     'user' => array(
-
-
       'retrieve' => array(
         'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
         'help' => 'Retrieves a user',
@@ -77,7 +75,38 @@ function _user_resource_definition() {
           ),
         ),
       ),
-
+      'index' => array(
+        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
+        'callback' => '_user_resource_index',
+        'args' => array(
+          array(
+            'name' => 'page',
+            'optional' => TRUE,
+            'type' => 'int',
+            'description' => 'The zero-based index of the page to get, defaults to 0.',
+            'default value' => 0,
+            'source' => array('param' => 'page'),
+          ),
+          array(
+            'name' => 'fields',
+            'optional' => TRUE,
+            'type' => 'string',
+            'description' => 'The fields to get.',
+            'default value' => '',
+            'source' => array('param' => 'fields'),
+          ),
+          array(
+            'name' => 'parameters',
+            'optional' => TRUE,
+            'type' => 'struct',
+            'description' => 'Parameters',
+            'default value' => NULL,
+            'source' => 'param',
+          ),
+        ),
+        'access arguments' => array('access user profiles'),
+        'access arguments append' => FALSE,
+      ),
       'actions' => array(
         'login' => array(
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
@@ -326,4 +355,52 @@ function _user_resource_logout() {
   $user = drupal_anonymous_user();
 
   return TRUE;
+}
+
+function _user_resource_index($page = 0, $fields = array(), $parameters = array()) {
+  $params = array();
+
+  if (module_exists('query_builder')) {
+    $builder = new QueryBuilder();
+    $parameters = (array)$parameters;
+
+    if (isset($parameters['__describe'])) {
+      return $builder->describe();
+    }
+
+    if (is_string($fields) && !empty($fields)) {
+      $fields = preg_split('/,\s?/', $fields);
+    }
+
+    if (!user_access('administer users') || !isset($parameters['active'])) {
+      $parameters['active'] = 1;
+    }
+    list($sql, $params) = $builder->query($fields, $parameters);
+  }
+  else {
+    $parameters = (array)$parameters;
+    if (!user_access('administer users') || !isset($parameters['active'])) {
+      $parameters['active'] = 1;
+    }
+    // Only allow fields that actually exist.
+    $user_fields = user_fields();
+    foreach($parameters as $key => $param) {
+      if (in_array($key, $user_fields)) {
+        // Only using strings for now since it is mostly safe for all types.
+        // TODO: fix the placeholder type.
+        $where[] = $key . " = '%s'";
+        $params[] = $param;
+      }
+    }
+    $sql = "SELECT * FROM {users}" . ((!empty($where))?' WHERE ' . implode(' AND ', $where):'');
+  }
+  dsm($sql);
+  dsm($params);
+  $res = db_query_range($sql, $params, $page * 20, 20);
+
+  $accounts = array();
+  while ($account = db_fetch_object($res)) {
+    $accounts[$account->uid] = $account;
+  }
+  return $accounts;
 }
