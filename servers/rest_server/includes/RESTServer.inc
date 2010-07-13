@@ -272,6 +272,8 @@ class RESTServer {
           fclose($handle);
         }
         return $data;
+      case 'GET':
+        return $_GET;
 
       default:
         return array();
