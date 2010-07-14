@@ -359,46 +359,36 @@ function _user_resource_logout() {
 
 function _user_resource_index($page = 0, $fields = array(), $parameters = array()) {
   $params = array();
+  $table = 'users';
+  $table_id = 'uid';
+  $schema = drupal_get_schema($table);
 
-  if (module_exists('query_builder')) {
-    $builder = new QueryBuilder();
-    $parameters = (array)$parameters;
-
-    if (isset($parameters['__describe'])) {
-      return $builder->describe();
-    }
-
-    if (is_string($fields) && !empty($fields)) {
-      $fields = preg_split('/,\s?/', $fields);
-    }
-
-    if (!user_access('administer users') || !isset($parameters['active'])) {
-      $parameters['active'] = 1;
-    }
-    list($sql, $params) = $builder->query($fields, $parameters);
+  $parameters = (array)$parameters;
+  if (!user_access('administer users') || !isset($parameters['active'])) {
+    $parameters['active'] = 1;
   }
-  else {
-    $parameters = (array)$parameters;
-    if (!user_access('administer users') || !isset($parameters['active'])) {
-      $parameters['active'] = 1;
+  $verified_fields = array();
+  foreach($fields as $field) {
+    if (in_array($field, array_keys($schema['fields']))) {
+      $verified_fields[] = $field;
     }
-    // Only allow fields that actually exist.
-    $user_fields = user_fields();
-    foreach($parameters as $key => $param) {
-      if (in_array($key, $user_fields)) {
-        // Only using strings for now since it is mostly safe for all types.
-        // TODO: fix the placeholder type.
-        $where[] = $key . " = '%s'";
-        $params[] = $param;
-      }
-    }
-    $sql = "SELECT * FROM {users}" . ((!empty($where))?' WHERE ' . implode(' AND ', $where):'');
   }
+  $fieldset = (!empty($verified_fields)?implode(', ', $verified_fields):'*');
+
+  // Only allow fields that actually exist.
+  foreach($parameters as $key => $param) {
+    if (in_array($key, array_keys($schema['fields']))) {
+      $where[] = $key . " = " . db_type_placeholder($schema['fields'][$key]['type']);
+      $params[] = $param;
+    }
+  }
+  $sql = "SELECT $fieldset FROM {$table}" . ((!empty($where))?' WHERE ' . implode(' AND ', $where):'');
+
   $res = db_query_range($sql, $params, $page * 20, 20);
 
-  $accounts = array();
-  while ($account = db_fetch_object($res)) {
-    $accounts[$account->uid] = $account;
+  $rows = array();
+  while ($row = db_fetch_object($res)) {
+    $rows[$row->{$table_id}] = $row;
   }
-  return $accounts;
+  return $rows;
 }
