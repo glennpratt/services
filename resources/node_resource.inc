@@ -219,7 +219,29 @@ function _node_resource_index($page = 0, $fields = array(), $parameters = array(
     list($sql, $params) = $builder->query($fields, $parameters);
   }
   else {
-    $sql = "SELECT * FROM {node} WHERE status = 1 ORDER BY sticky DESC, created DESC";
+    $table = 'node';
+    $schema = drupal_get_schema($table);
+
+    $parameters = (array)$parameters;
+    if (!user_access('administer nodes') || !isset($parameters['status'])) {
+      $parameters['status'] = 1;
+    }
+    $verified_fields = array();
+    foreach($fields as $field) {
+      if (in_array($field, array_keys($schema['fields']))) {
+        $verified_fields[] = $field;
+      }
+    }
+    $fieldset = (!empty($verified_fields)?implode(', ', $verified_fields):'*');
+
+    // Only allow fields that actually exist.
+    foreach($parameters as $key => $param) {
+      if (in_array($key, array_keys($schema['fields']))) {
+        $where[] = $key . " = " . db_type_placeholder($schema['fields'][$key]['type']);
+        $params[] = $param;
+      }
+    }
+    $sql = "SELECT $fieldset FROM {$table}" . ((!empty($where))?' WHERE ' . implode(' AND ', $where):'') . " ORDER BY sticky DESC, created DESC";
   }
   $res = db_query_range($sql, $params, $page * 20, 20);
 
