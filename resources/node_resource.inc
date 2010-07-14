@@ -148,7 +148,9 @@ function _node_resource_create($node) {
   $values = (array)$node;
   $form_state = array();
   $form_state['values'] = $values;
-  $form_state['values']['op'] = t('Save');
+  if (!isset($form_state['values']['op'])) {
+    $form_state['values']['op'] = t('Save');
+  }
   $ret = drupal_execute($node->type . '_node_form', $form_state, $node);
 
   // Fetch $nid out of $form_state
