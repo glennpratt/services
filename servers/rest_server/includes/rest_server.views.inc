@@ -75,6 +75,7 @@ class RESTServerViewBuiltIn extends RESTServerView {
       $assoc = FALSE || empty($data);
       foreach ($data as $key => $value) {
         if (is_numeric($key)) {
+          $id = $key;
           $key = 'item';
         }
         else {
@@ -83,6 +84,9 @@ class RESTServerViewBuiltIn extends RESTServerView {
           $key = preg_replace('/^([0-9]+)/', '_$1', $key);
         }
         $element = $doc->createElement($key);
+        if (!is_null($id)) {
+          $element->setAttribute('id', $id);
+        }
         $parent->appendChild($element);
         $this->xml_recurse($doc, $element, $value);
       }
