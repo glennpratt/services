@@ -214,7 +214,7 @@ function _user_resource_create($account) {
 
   // Error if needed.
   if ($errors = form_get_errors()) {
-    return services_error(implode("\n", $errors), 401);
+    return services_error(implode("\n", $errors), 406);
   }
   else {
     return $form_state['user'];
@@ -270,7 +270,7 @@ function _user_resource_update($account) {
 
   // Error if needed.
   if ($errors = form_get_errors()) {
-    return services_error(implode("\n", $errors), 401);
+    return services_error(implode("\n", $errors), 406);
   }
   else {
     return $account;
