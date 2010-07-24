@@ -55,7 +55,7 @@ function rest_server_server() {
       break;
     }
     // Return the error message in the body so we have a better idea what is going on.
-    return $e;
+    return $server->error_response($e->getMessage());
   }
 }
 

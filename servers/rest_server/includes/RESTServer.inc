@@ -2,6 +2,8 @@
 
 class RESTServer {
   private $endpoint;
+  private $formatter;
+  private $controller;
 
   /**
    * Handles the call to the REST server
@@ -140,12 +142,30 @@ class RESTServer {
       }
     }
 
-    $result = services_controller_execute($controller, $arguments, $auth_arguments);
     $formatter = $formats[$response_format];
+
+    // Store the controller and formatter in case we need to return an error
+    // message to the client.
+    $this->controller = $controller;
+    $this->formatter = $formatter;
+
+    $result = services_controller_execute($this->controller, $arguments, $auth_arguments);
 
     // Set the content type and render output
     drupal_set_header('Content-type: ' . $mime_type);
-    return $this->renderFormatterView($controller, $formatter, $result);
+    return $this->renderFormatterView($this->controller, $this->formatter, $result);
+  }
+
+  /**
+   * Formats an error message, as negotiated in RESTServer->handle().
+   *
+   * @param string $error
+   *  An error message raised during a RESTServer->handle().
+   * @return string
+   *  Returns error, rendered in the previously negotiated format.
+   */
+  public function error_response($error) {
+    return $this->renderFormatterView($this->controller, $this->formatter, explode("\n", $error));
   }
 
   /**
