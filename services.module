@@ -43,10 +43,15 @@ function services_perm() {
  * Implementation of hook_hook_info().
  */
 function services_hook_info() {
-  $hooks['services_resources'] = array(
-    'group' => 'services',
+  return array(
+    'services_resources' => array(
+      'group' => array(
+        'services' => array(
+          'runs when' => t('Legacy services resources are called.'),
+        ),
+      ),
+    ),
   );
-  return $hooks;
 }
 
 /**
