@@ -179,7 +179,9 @@ function _node_resource_update($nid, $node) {
     $values = (array)$node;
     $form_state = array();
     $form_state['values'] = $values;
-    $form_state['values']['op'] = t('Save');
+    if (!isset($form_state['values']['op'])) {
+      $form_state['values']['op'] = t('Save');
+    }
     $form_state['node'] = (array)$old_node;
 
     drupal_execute($old_node->type . '_node_form', $form_state, $old_node);
