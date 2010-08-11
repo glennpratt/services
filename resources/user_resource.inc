@@ -112,6 +112,7 @@ function _user_resource_definition() {
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/user_resource'),
           'help' => 'Login a user for a new session',
           'callback' => '_user_resource_login',
+          'access callback' => 'user_access',
           'access arguments' => array('access content'),
           'args' => array(
             array(
