@@ -165,7 +165,10 @@ class RESTServer {
    *  Returns error, rendered in the previously negotiated format.
    */
   public function error_response($error) {
-    return $this->renderFormatterView($this->controller, $this->formatter, explode("\n", $error));
+    if (isset($this->controller) && isset($this->formatter)) {
+      return $this->renderFormatterView($this->controller, $this->formatter, explode("\n", $error));
+    }
+    return $error;
   }
 
   /**
